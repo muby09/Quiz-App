@@ -327,6 +327,15 @@ function pickRandomQuestions(count) {
     return arr.slice(0, count);
 }
 
+// NEW: Fisher–Yates shuffle utility
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 // event listeners 
 startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", restartQuiz);
@@ -363,12 +372,15 @@ function showQuestion() {
 
     answersContainer.innerHTML = "";
 
-    currentQuestion.answers.forEach((answer) => {
+    // make a shallow copy of answers and shuffle so right answer isn't always same position
+    const answers = shuffleArray(currentQuestion.answers.slice());
+
+    answers.forEach((answer) => {
         const button = document.createElement("button");
         button.textContent = answer.text ;
         button.classList.add("answer-btn");
 
-        // What is Dataset? Its a property of the button element that allows you to store custom data 
+        // store correctness as data attribute
         button.dataset.correct = answer.correct;
 
         button.addEventListener("click", selectAnswer);
